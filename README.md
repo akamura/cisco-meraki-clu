@@ -29,30 +29,55 @@
         - rich
 
 ## Clone the repository
+```shell
     git clone https://github.com/akamura/cisco-meraki-clu.git
-
+```
 ## Install the required packages
+```shell
     pip install -r /opt/akamura/ciscomerakiclu/requirements.txt
-    
-    or
-
+```
+or
+```shell
     sudo pip install tabulate pathlib datetime termcolor pysqlcipher3 rich requests --break-system-packages
-
+```
 
 Please note that when you execute **main.py** it will search for additional modules and autoinstall it with pip based on modules references.
 
 
-## Install from a Release
+## 🐧 DEB Install from a Release
 At the moment I released the program for Ubuntu and tested under OS release 22.04.3 LTS.
 Download the release and execute.
-
+```shell
     sudo apt install ./cisco-meraki-clu.deb
+```
 
-
-## Uninstall from a Release
+## 🐧 DEB Uninstall from a Release
 If you want to uninstall the Ubuntu .deb release execute this command
-
+```shell
     sudo apt remove ciscomerakiclu
+```
+
+## 🍎 MacOS Install from Source
+I'm working on releasing the a DMG on next version update, meanwhile you can use the source code.
+```shell
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+```shell
+    brew install python3 pipx sqlite sqlcipher
+```
+```shell
+    /Library/Developer/CommandLineTools/usr/bin/python3 -m pip install --upgrade pip
+```
+```shell
+    pip3 install pysqlcipher3 --no-build-isolation
+```
+```shell
+    pip3 install getpass pathlib datetime termcolor rich
+```
+Assuming that you downloaded and unzipped the source code:
+```shell
+    sudo mv ~/Downloads/cisco-meraki-clu-1.0/opt/akamura /opt
+```
 
 
 <br><br>
