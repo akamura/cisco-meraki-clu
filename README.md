@@ -57,7 +57,7 @@ If you want to uninstall the Ubuntu .deb release execute this command
     sudo apt remove ciscomerakiclu
 ```
 
-## 🍎 MacOS Install from Source
+## 🍎 macOS Install from Source
 I'm working on releasing the a DMG on next version update, meanwhile you can use the source code.
 ```shell
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
