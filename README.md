@@ -19,7 +19,7 @@
 
 ## Required dependencies
     - Python 3.x
-    - Required Python Modules:
+    - Required Python Packages:
         - pysqlcipher3
         - tabulate
         - getpass
