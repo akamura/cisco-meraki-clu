@@ -79,7 +79,7 @@ Every bit of help is valued!
 
 <br><br>
 # 💖 Acknowledgments
-Cisco Systems Inc. to provide such robust API, you can find more [clicking here](https://developer.cisco.com/meraki/).
+Cisco Systems Inc. to provide such robust API, you can find more [here](https://developer.cisco.com/meraki/).
 
 Open-Source Community: For the valuable libraries that enhance this project.
 
