@@ -70,6 +70,6 @@ Open-Source Community: For the valuable libraries that enhance this project.
 
 <br><br>
 # 📬 Contact
-Got questions or suggestions? Join the conversation on the Discussions panel.
+Got questions or suggestions? Join the conversation on the [Discussions panel](https://github.com/akamura/cisco-meraki-clu/discussions).
 
 Let's make Network Management seamless with Cisco Meraki CLU! 🚀
