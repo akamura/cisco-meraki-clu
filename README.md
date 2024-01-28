@@ -31,22 +31,26 @@
 ## Clone the repository
     git clone https://github.com/akamura/cisco-meraki-clu.git
 
-## Navigate to the repository and install libraries
-    cd /opt/akamura/ciscomerakiclu
+## Install the required packages
+    pip install -r /opt/akamura/ciscomerakiclu/requirements.txt
+    
+    or
 
-you will find the **setup.py** file which contain a list of libraries and modules needed to run the program.
+    sudo pip install tabulate pathlib datetime termcolor pysqlcipher3 rich requests --break-system-packages
+
+
 Please note that when you execute **main.py** it will search for additional modules and autoinstall it with pip based on modules references.
 
 
-## Install from a Package
-At the moment I released the first package for Ubuntu and tested under OS release 22.04.3 LTS.
-Download the package and execute.
+## Install from a Release
+At the moment I released the program for Ubuntu and tested under OS release 22.04.3 LTS.
+Download the release and execute.
 
     sudo apt install ./cisco-meraki-clu.deb
 
 
-## Uninstall from a Package
-If you want to uninstall the Ubuntu .deb package execute this command
+## Uninstall from a Release
+If you want to uninstall the Ubuntu .deb release execute this command
 
     sudo apt remove ciscomerakiclu
 
