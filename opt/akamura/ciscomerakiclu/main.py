@@ -36,6 +36,7 @@ import os
 import shutil
 import subprocess
 import sys
+import logging
 import traceback
 from tabulate import tabulate
 from getpass import getpass
@@ -67,6 +68,25 @@ from modules.meraki import export_devices_to_csv
 
 
 # ==================================================
+# ERROR logging
+# ==================================================
+# Logging configuration in your Python script
+logger = logging.getLogger('ciscomerakiclu')
+logger.setLevel(logging.ERROR)
+
+log_directory = '/opt/akamura/ciscomerakiclu/log/'
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
+
+log_file = os.path.join(log_directory, 'error.log')
+file_handler = logging.FileHandler(log_file)
+file_handler.setLevel(logging.ERROR)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+
+# ==================================================
 # CLEAR the screen and present the main menu
 # ==================================================
 def clear_screen():
@@ -93,27 +113,43 @@ def get_terminal_size():
 # CREATE the encrypted Database
 # ==================================================
 def create_cisco_meraki_clu_db(password):
+    db_path = '/opt/akamura/ciscomerakiclu/db/cisco_meraki_clu_db.db'
+    conn = None
+    
     try:
-        conn = sqlite.connect(os.path.join('db', 'cisco_meraki_clu_db.db'))
+        if not os.path.exists(os.path.dirname(db_path)):
+            os.makedirs(os.path.dirname(db_path))
+
+        conn = sqlite.connect(db_path)
         conn.execute(f"PRAGMA key = '{password}'")
         conn.execute("CREATE TABLE IF NOT EXISTS sensitive_data (id INTEGER PRIMARY KEY, data TEXT)")
         print("Database and table created successfully.")
         conn.close()
+        return True
     except Exception as e:
-        print(f"An error occurred: {e}")
-        sys.exit(colored("\nFailed to create or access the encrypted database.\n", "red"))
+        print(colored("\nFailed to create or access the encrypted database.\n", "red") + str(e))
+        input("Press Enter to retry")
+        return False
+    
+    finally:
+        if conn:
+            conn.close()
 
 def database_exists():
-    return os.path.exists('db/cisco_meraki_clu_db.db')
+    db_path = '/opt/akamura/ciscomerakiclu/db/cisco_meraki_clu_db.db'
+    return os.path.exists(db_path)
 
 def verify_database_password(password):
     try:
-        conn = sqlite.connect(os.path.join('db', 'cisco_meraki_clu_db.db'))
+        db_path = os.path.join('/opt/akamura/ciscomerakiclu/db', 'cisco_meraki_clu_db.db')
+        conn = sqlite.connect(db_path)
         conn.execute(f"PRAGMA key = '{password}'")
         conn.execute("SELECT count(*) FROM sensitive_data")
         conn.close()
     except Exception as e:
-        sys.exit(colored("\nError: The provided database password is incorrect.\n", "red"))
+        print(colored("\nError: The provided database password is incorrect.\n", "red"))
+        input("Press Enter to close the program")
+        return False
 
 def prompt_create_database():
     create_db = input("The program need a SQLCipher encrypted database to store sensitive data like Cisco Meraki API key.\nDo you want to create the DB? [yes - no]]: ").strip().lower()
@@ -124,9 +160,14 @@ def prompt_create_database():
         create_cisco_meraki_clu_db(db_password)
         return db_password
     elif create_db == 'no':
-        sys.exit(colored("\nNo database created. Exiting the program.\n", "red"))
+        print(colored("\nNo database created. Exiting the program.\n", "red"))
+        input("Press Enter to close the program")
+        return False
     else:
-        sys.exit(colored("\nInvalid input. Exiting the program.\n", "red"))
+        print(colored("\nInvalid input. Please try again.\n", "red"))
+        input("Press Enter to retry")
+        return False
+
 
 
 # ==================================================
@@ -352,7 +393,7 @@ def select_network(api_key, organization_id):
 
 
 # ==================================================
-# ERROR handling
+# ERROR handling and logging
 # ==================================================
 if __name__ == "__main__":
     try:
@@ -368,6 +409,8 @@ if __name__ == "__main__":
             verify_database_password(db_password)
         main_menu(db_password)
     except Exception as e:
+        logger.error("An error occurred", exc_info=True)
         print("An error occurred:")
         print(e)
         traceback.print_exc()
+        input("Press Enter to exit...")

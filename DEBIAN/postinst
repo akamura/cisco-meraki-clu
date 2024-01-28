@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
 #   Version:     1.0                                                      *
@@ -29,45 +31,15 @@
 #**************************************************************************
 
 
-# ==================================================
-# IMPORT various libraries and modules
-# ==================================================
-import os
-from pysqlcipher3 import dbapi2 as sqlite
+LOG_DIR="/opt/akamura/ciscomerakiclu/log"
 
+mkdir -p "$LOG_DIR"
+if [ -n "$SUDO_USER" ]; then
+    USER="$SUDO_USER"
+else
+    USER="$USER"
+fi
 
-# ==================================================
-# SAVE the Cisco Meraki API Key in the Encrypted DB
-# ==================================================
-def save_api_key(db_password, api_key):
-    try:
-        db_path = os.path.join('/opt/akamura/ciscomerakiclu/db', 'cisco_meraki_clu_db.db')
-        conn = sqlite.connect(db_path)
-        conn.execute(f"PRAGMA key = '{db_password}'")
-        conn.execute("INSERT OR REPLACE INTO sensitive_data (id, data) VALUES (1, ?)", (api_key,))
-        conn.commit()
-        print("API key saved successfully.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    finally:
-        conn.close()
-
-def get_api_key(db_password):
-    conn = None  # Initialize connection to None
-    try:
-        db_path = os.path.join('/opt/akamura/ciscomerakiclu/db', 'cisco_meraki_clu_db.db')
-        conn = sqlite.connect(db_path)
-        conn.execute(f"PRAGMA key = '{db_password}'")
-
-        cursor = conn.execute("SELECT data FROM sensitive_data WHERE id = 1")
-        api_key = cursor.fetchone()
-
-        return api_key[0] if api_key else None
-
-    except Exception as e:
-        print(colored("An error occurred while accessing the database: ", "red") + str(e))
-        return None
-
-    finally:
-        if conn:
-            conn.close()
+chown $USER:$USER "$LOG_DIR"
+chmod 755 "$LOG_DIR"
+exit 0
