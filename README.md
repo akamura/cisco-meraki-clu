@@ -72,11 +72,16 @@ I'm working on releasing the a DMG on next version update, meanwhile you can use
     pip3 install pysqlcipher3 --no-build-isolation
 ```
 ```shell
-    pip3 install getpass pathlib datetime termcolor rich
+    pip install tabulate getpass pathlib datetime termcolor rich requests
 ```
 Assuming that you downloaded and unzipped the source code:
 ```shell
-    sudo mv ~/Downloads/cisco-meraki-clu-1.0/opt/akamura /opt
+    sudo mv ~/Downloads/cisco-meraki-clu-main/opt/akamura /opt
+```
+
+Run the application from the Terminal with this command
+```shell
+    python3 /opt/akamura/ciscomerakiclu/main.py
 ```
 
 
