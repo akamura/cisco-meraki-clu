@@ -17,6 +17,16 @@
 <br><br>
 # 🚀 Installation
 
+## Required dependencies
+    - Python 3.x
+    - Required Python Modules:
+        - pysqlcipher3
+        - tabulate
+        - getpass
+        - pathlib
+        - datetime
+        - termcolor
+        - rich
 
 ## Clone the repository
     git clone https://github.com/akamura/cisco-meraki-clu.git
@@ -33,6 +43,7 @@ At the moment I released the first package for Ubuntu and tested under OS releas
 Download the package and execute.
 
     sudo apt install ./cisco-meraki-clu.deb
+
 
 ## Uninstall from a Package
 If you want to uninstall the Ubuntu .deb package execute this command

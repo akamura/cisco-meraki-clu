@@ -38,26 +38,39 @@ import subprocess
 import sys
 import logging
 import traceback
+
+required_packages = {
+    "tabulate": "tabulate",
+    "getpass": "getpass",
+    "pathlib": "pathlib",
+    "datetime": "datetime",
+    "termcolor": "termcolor",
+    "pysqlcipher3": "pysqlcipher3",
+    "rich": "rich"
+}
+
+missing_packages = []
+for module, package in required_packages.items():
+    try:
+        __import__(module)
+    except ImportError:
+        missing_packages.append(package)
+
+if missing_packages:
+    print("Missing required Python packages: " + ", ".join(missing_packages))
+    print("Please install them using the following command:")
+    print(f"{sys.executable} -m pip install " + " ".join(missing_packages))
+    sys.exit(1)
+
 from tabulate import tabulate
 from getpass import getpass
 from pathlib import Path
 from datetime import datetime
 from termcolor import colored
-try:
-    from pysqlcipher3 import dbapi2 as sqlite
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pysqlcipher3"])
-    from pysqlcipher3 import dbapi2 as sqlite
-try:
-    from rich.console import Console
-    from rich.table import Table
-    from rich.box import SIMPLE
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "rich"])
-    from rich.console import Console
-    from rich.table import Table
-    from rich.box import SIMPLE
-
+from pysqlcipher3 import dbapi2 as sqlite
+from rich.console import Console
+from rich.table import Table
+from rich.box import SIMPLE
 
 # ==================================================
 # IMPORT custom modules

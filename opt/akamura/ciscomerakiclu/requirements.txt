@@ -1,0 +1,9 @@
+# Required modules to run Cisco Meraki CLU
+tabulate
+getpass
+pathlib
+datetime
+termcolor
+pysqlcipher3
+rich
+setuptools
