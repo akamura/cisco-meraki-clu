@@ -4,6 +4,7 @@
 
 **Cisco Meraki CLU** (Command Line Utility) is an essential tool crafted for Network Administrators managing Cisco Meraki networks. It streamlines and accelerates your workflow, offering quick access to vital information—especially crucial during intensive troubleshooting sessions where time is of the essence and web dashboard accessibility is limited.
 
+
 <br><br>
 # 🌟 Features
 
@@ -25,6 +26,7 @@
     cd /opt/akamura/ciscomerakiclu
 
 you will find the **setup.py** file which contain a list of libraries and modules needed to run the program.
+Please note that when you execute **main.py** it will search for additional modules and autoinstall it with pip based on modules references.
 
 
 ## Install from a Package
@@ -41,22 +43,18 @@ If you want to uninstall the Ubuntu .deb package execute this command
 
 <br><br>
 # 🎬 Getting Started
-First of all you need to generate a Cisco Meraki API key from your account, for this you can refer to this [Cisco Meraki Dashboard API](https://documentation.meraki.com/General_Administration/Other_Topics/Cisco_Meraki_Dashboard_API) Knowledge Base.
 
+**Step 1: Retrieve your Cisco Meraki API Key**
+   - Before you begin, make sure you have Cisco Meraki API key.
+   - You can retrieve it from your Cisco Meraki Dashboard, for this you can refer to the [Cisco Meraki Dashboard API](https://documentation.meraki.com/General_Administration/Other_Topics/Cisco_Meraki_Dashboard_API) Knowledge Base.
 
-<br><br>
-# 🛠 Usage
-From the Ubuntu Application Launcher click on Cisco Meraki CLU.
+**Step 2: Store the key in the Encrypted AES-256 DB**
+   - When you run the program for the first time it will ask you to create the DB.
+   - Create the DB and then select option 5 from the Main Menu called **Set your Cisco Meraki API Key**
+   - Paste your Cisco Meraki API key and press enter. The key will be stored securely and can be edited by selecting option 5 again. For security reasons there will be no option to show the Cisco Meraki API key after this have been saved.
 
-The application at first start will promting you to create the encrypted database that will need to safely store your API key
-Initialize your Cisco Meraki API key with the utility.
-Access a range of features from device listing to MX status monitoring.
-Experience a more streamlined approach to network management!
-
-From the terminal
-
-    cd /opt/akamura/ciscomerakiclu
-    python3 main.py
+**Step 3: Use the program**
+   - Your key is stored and are ready to go.
 
 
 <br><br>
