@@ -17,6 +17,12 @@
 <br><br>
 # 🚀 Installation
 
+## Optimal Experience
+
+To achieve the optimal experience, I highly encourage you to download and install my specially crafted terminal profile. This profile has been meticulously tailored, with a focus on color customization, to ensure a perfect blend of aesthetic appeal and functional excellence.
+
+[Download and Install Terminal Profile](https://github.com/akamura/terminal-profile/)
+
 ## Required dependencies
     - Python 3.x
     - Required Python Packages:
