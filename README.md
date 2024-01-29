@@ -116,8 +116,7 @@ Run the application from the Terminal with this command
 
 <br><br>
 # 👐 Contributing
-Your contributions make this project thrive. Feel free to report issues, suggest features, or submit pull requests.
-Every bit of help is valued!
+This is not just a project; it's a community effort. I'm inviting you to be a part of this journey. Star it, fork it, contribute, or just play around with it. Every feedback, issue, or pull request is an opportunity for us to make this tool even more amazing. 
 
 
 <br><br>
