@@ -23,12 +23,17 @@ To achieve the optimal experience, I highly encourage you to download and instal
 
 [Download and Install Terminal Profile](https://github.com/akamura/terminal-profile/)
 
-## Required dependencies
+## Required packages and dependencies
     - Python 3.x
+    - pip
+    - sqlcipher
+    - build-essential
+    - libsqlcipher-dev
+    - libsqlite3-dev
+
     - Required Python Packages:
         - pysqlcipher3
         - tabulate
-        - getpass
         - pathlib
         - datetime
         - termcolor
