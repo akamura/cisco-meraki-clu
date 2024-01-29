@@ -1,6 +1,5 @@
-# Required modules to run Cisco Meraki CLU
+# Required dependencies to run Cisco Meraki CLU
 tabulate
-getpass
 pathlib
 datetime
 termcolor
