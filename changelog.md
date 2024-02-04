@@ -3,7 +3,7 @@
 ### New Features
 - **[MX Appliance]** List firewall rules and fetch (if any) Organization policy objects and groups.
 - **[MX Appliance]** Download firewall rules to the %User% system Download folder for convenience.
-- Retrieve Switch Ports data and their status based on a timespan, including useful information such as in/out traffic and PoE power metrics. Currently, a value of 1800 seconds, equivalent to 30 minutes, is set on line 230 of Module "meraki.py." Feel free to adjust the value.
+- **[MS Switches]** Retrieve Switch Ports data and their status based on a timespan, including useful information such as in/out traffic and PoE power metrics. Currently, a value of 1800 seconds, equivalent to 30 minutes, is set on line 230 of Module "meraki.py." Feel free to adjust the value.
 
 ### Bug Fixes
 - No fixes from the previous release.
