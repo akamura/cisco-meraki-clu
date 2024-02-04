@@ -1,5 +1,5 @@
 # Cisco Meraki Command Line Utility
-![Cisco Meraki CLU Screenshot](Preview.png)
+![Cisco Meraki CLU Screenshot](Preview_1_1.png)
 
 **Cisco Meraki CLU** (Command Line Utility) is an essential tool crafted for Network Administrators managing Cisco Meraki networks. It streamlines and accelerates your workflow, offering quick access to vital information—especially crucial during intensive troubleshooting sessions where time is of the essence and web dashboard accessibility is limited.
 
