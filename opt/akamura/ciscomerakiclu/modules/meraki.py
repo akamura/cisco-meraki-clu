@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.0                                                      *
+#   Version:     1.1                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -82,6 +82,39 @@ def export_devices_to_csv(devices, network_name, device_type, base_folder_path):
 
 
 # ==================================================
+# EXPORT firewall rules in a beautiful table format
+# ==================================================
+def export_firewal_rules_to_csv(firewall_rules, network_name, base_folder_path):
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    filename = f"{network_name}_{current_date}_MX_Firewall_Rules.csv"
+    file_path = os.path.join(base_folder_path, filename)
+
+    if firewall_rules:
+        # Priority columns, adjust these based on your data
+        priority_columns = ['policy', 'protocol', 'srcport', 'srccidr', 'destport','destcidr','comments']
+
+        # Gather all columns from the firewall rules
+        all_columns = set(key for rule in firewall_rules for key in rule.keys())
+        
+        # Reorder columns so that priority columns come first
+        ordered_columns = priority_columns + [col for col in all_columns if col not in priority_columns]
+
+        with open(file_path, 'w', newline='', encoding='utf-8') as file:
+            # Convert fieldnames to uppercase
+            fieldnames = [col.upper() for col in ordered_columns]
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for rule in firewall_rules:
+                # Convert keys to uppercase to match fieldnames
+                row = {col.upper(): rule.get(col, '') for col in ordered_columns}
+                writer.writerow(row)
+            
+        print(f"Data exported to {file_path}")
+    else:
+        print("No data to export.")
+
+
+# ==================================================
 # GET a list of Organizations
 # ==================================================
 def get_meraki_organizations(api_key):
@@ -119,13 +152,17 @@ def select_organization(api_key):
 # ==================================================
 # GET a list of Networks in an Organization
 # ==================================================
-def get_meraki_networks(api_key, organization_id):
+def get_meraki_networks(api_key, organization_id, per_page=5000):
     url = f"https://api.meraki.com/api/v1/organizations/{organization_id}/networks"
     headers = {
         "X-Cisco-Meraki-API-Key": api_key,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Accept": "application/json"
     }
-    response = requests.get(url, headers=headers)
+    params = {
+        "perPage": per_page
+    }
+    response = requests.get(url, headers=headers, params=params)
     if response.status_code == 200:
         networks = response.json()
         # Sort the networks by name
@@ -133,7 +170,7 @@ def get_meraki_networks(api_key, organization_id):
         return networks
     else:
         print("Failed to fetch networks")
-        return None
+        return None, None
 
 
 # ==================================================
@@ -182,6 +219,33 @@ def display_switches(api_key, network_id):
 
 
 # ==================================================
+# GET a list of Switch Ports and their Status
+# ==================================================
+def get_switch_ports(api_key, serial):
+    url = f"https://api.meraki.com/api/v1/devices/{serial}/switch/ports"
+    headers = {"X-Cisco-Meraki-API-Key": api_key, "Content-Type": "application/json"}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to fetch switch ports for serial {serial}, status code: {response.status_code}")
+        return None 
+    
+def get_switch_ports_statuses_with_timespan(api_key, serial, timespan=1800):
+    url = f"https://api.meraki.com/api/v1/devices/{serial}/switch/ports/statuses"
+    headers = {"X-Cisco-Meraki-API-Key": api_key, "Content-Type": "application/json"}
+    # Assuming the API supports a 'timespan' query parameter for this endpoint
+    params = {'timespan': timespan}
+
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to fetch switch ports for serial {serial}, status code: {response.status_code}")
+        return None 
+
+
+# ==================================================
 # GET a list of Access Points in an Network
 # ==================================================
 def get_meraki_access_points(api_key, network_id):
@@ -220,3 +284,86 @@ def get_meraki_static_routes(api_key, network_id):
     else:
         print(f"Failed to fetch static routes: {response.status_code}, {response.text}")
         return None
+    
+
+# ==================================================
+# SELECT a Network in an Organization
+# ==================================================
+def select_mx_network(api_key, organization_id):
+    networks = get_meraki_networks(api_key, organization_id)
+    if networks:
+        for idx, network in enumerate(networks, 1):
+            print(f"{idx}. {network['name']}")
+
+        choice = input(colored("\nSelect an Organization Network (enter the number): ", "cyan"))
+        try:
+            selected_index = int(choice) - 1
+            if 0 <= selected_index < len(networks):
+                return networks[selected_index]
+            else:
+                print("Invalid selection.")
+        except ValueError:
+            print("Please enter a number.")
+
+    return None
+
+
+# ==================================================
+# GET Layer 3 Firewall Rules for a Network
+# ==================================================
+def get_l3_firewall_rules(api_key, network_id):
+    url = f"https://api.meraki.com/api/v1/networks/{network_id}/appliance/firewall/l3FirewallRules"
+    headers = {"X-Cisco-Meraki-API-Key": api_key, "Content-Type": "application/json"}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()["rules"]
+    else:
+        print("Failed to fetch L3 firewall rules")
+        return None
+
+
+# ==================================================
+# DISPLAY Firewall Rules in a Table Format
+# ==================================================
+def display_firewall_rules(firewall_rules):
+    if firewall_rules:
+        print("\nLayer 3 Firewall Rules:")
+        print(tabulate(firewall_rules, headers="keys", tablefmt="pretty"))
+    else:
+        print("No firewall rules found in the selected network.")
+
+
+# ==============================================================
+# FETCH Organization policy and group objects for Firewall Rules
+# ==============================================================
+def get_organization_policy_objects(api_key, organization_id):
+    url = f"https://api.meraki.com/api/v1/organizations/{organization_id}/policyObjects"
+    headers = {
+        "X-Cisco-Meraki-API-Key": api_key,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        print("Policy Objects:", data[:5])
+        return data
+    else:
+        print(f"Failed to fetch organization policy objects: {response.text}")
+        return []
+
+def get_organization_policy_objects_groups(api_key, organization_id):
+    url = f"https://api.meraki.com/api/v1/organizations/{organization_id}/policyObjects/groups"
+    headers = {
+        "X-Cisco-Meraki-API-Key": api_key,
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        print("Policy Objects Groups:", data[:5])
+        return data
+    else:
+        print(f"Failed to fetch organization policy objects groups: {response.text}")
+        return []
