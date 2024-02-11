@@ -1,7 +1,7 @@
 ## Version 1.2 (2024-02-11)
 
 ### New Features
-- **[MS Switche and MR Access Points]** Implemented the new feature "Get Organization Devices Statuses".
+- **[MS Switches and MR Access Points]** Implemented the new feature "Get Organization Devices Statuses".
 
 ### Bug Fixes
 - No fixes from the previous release.
