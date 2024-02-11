@@ -1,3 +1,23 @@
+## Version 1.2 (2024-02-11)
+
+### New Features
+- **[MS Switches]** Implemented the new feature "Get Organization Devices Statuses".
+
+### Bug Fixes
+- No fixes from the previous release.
+
+### Enhancements
+- Refactored the entire project to organize the code into different subfolders to accommodate future enhancements.
+
+### Documentation Updates
+- Updated installation instructions in the README.
+
+### Contributors
+- [Stefano Bettini](https://www.linkedin.com/in/stefano-bettini-97904918a/) for providing great optimization suggestions to show management interface details such as if a device has a statically or dynamically assigned IP.
+
+
+
+
 ## Version 1.1 (2024-02-04)
 
 ### New Features

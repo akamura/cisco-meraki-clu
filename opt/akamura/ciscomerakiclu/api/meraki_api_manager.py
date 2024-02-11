@@ -34,6 +34,7 @@
 # ==================================================
 import os
 from pysqlcipher3 import dbapi2 as sqlite
+from termcolor import colored
 
 
 # ==================================================

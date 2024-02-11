@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.1                                                      *
+#   Version:     1.2                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -84,7 +84,7 @@ def export_devices_to_csv(devices, network_name, device_type, base_folder_path):
 # ==================================================
 # EXPORT firewall rules in a beautiful table format
 # ==================================================
-def export_firewal_rules_to_csv(firewall_rules, network_name, base_folder_path):
+def export_firewall_rules_to_csv(firewall_rules, network_name, base_folder_path):
     current_date = datetime.now().strftime("%Y-%m-%d")
     filename = f"{network_name}_{current_date}_MX_Firewall_Rules.csv"
     file_path = os.path.join(base_folder_path, filename)
@@ -366,4 +366,22 @@ def get_organization_policy_objects_groups(api_key, organization_id):
         return data
     else:
         print(f"Failed to fetch organization policy objects groups: {response.text}")
+        return []
+
+
+# ==============================================================
+# FETCH Organization Devices Statuses
+# ==============================================================
+def get_organization_devices_statuses(api_key, organization_id):
+    url = f"https://api.meraki.com/api/v1/organizations/{organization_id}/devices/statuses"
+    headers = {
+        "X-Cisco-Meraki-API-Key": api_key,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to fetch organization devices statuses. Status code: {response.status_code}")
         return []
