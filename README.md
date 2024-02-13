@@ -28,6 +28,7 @@ To achieve the optimal experience, I highly encourage you to download and instal
 ## Required packages and dependencies
     - Python 3.x
     - pip
+    - sqlite
     - sqlcipher
     - build-essential
     - libsqlcipher-dev
@@ -51,7 +52,7 @@ To achieve the optimal experience, I highly encourage you to download and instal
 ```
 or
 ```shell
-    sudo pip install tabulate pathlib datetime termcolor pysqlcipher3 rich requests --break-system-packages
+    sudo pip install tabulate pathlib datetime termcolor pysqlcipher3 rich requests
 ```
 
 Please note that when you execute **main.py** it will search for additional modules and autoinstall it with pip based on modules references.
