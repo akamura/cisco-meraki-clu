@@ -1,7 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Terminal=true
-Exec=/opt/akamura/ciscomerakiclu/run
-Name=Cisco Meraki CLU
-Icon=/opt/akamura/ciscomerakiclu/icons/cisco-meraki-icon.png
