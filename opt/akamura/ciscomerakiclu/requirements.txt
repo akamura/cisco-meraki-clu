@@ -1,8 +1,0 @@
-# Required dependencies to run Cisco Meraki CLU
-tabulate
-pathlib
-datetime
-termcolor
-pysqlcipher3
-rich
-setuptools
