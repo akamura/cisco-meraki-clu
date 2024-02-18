@@ -1,3 +1,17 @@
+## Version 1.3 (2024-02-18)
+
+### New Features
+- **[Microsoft Windows]** The application has undergone a comprehensive code refactor, enabling it to run seamlessly on Microsoft Windows. Understanding the importance of not compromising on security, I maintained SQLCipher for its robust encryption on Linux and MacOS. For Windows users, I've adapted by rewriting the database layer to incorporate Fernet encryption, ensuring security standards across Windows platform.
+- **[Main Menu]** Refactored main menu to align it to the web version. This evolution is aimed at enhancing your network management experience, making it more accessible especially during critical troubleshooting tasks.
+
+### Bug Fixes
+- No fixes from the previous release.
+
+### Documentation Updates
+- Updated for Microsoft Windows.
+
+
+
 ## Version 1.2 (2024-02-11)
 
 ### New Features
