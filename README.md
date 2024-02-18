@@ -51,6 +51,13 @@ To achieve the optimal experience, I highly encourage you to download and instal
 ```shell
     pip install -r /opt/akamura/ciscomerakiclu/requirements.txt
 ```
+<<<<<<< HEAD
+=======
+or
+```shell
+    sudo pip install tabulate pathlib datetime termcolor pysqlcipher3 rich requests
+```
+>>>>>>> ccd5aa1e5c245fba8632ce02b258c91f0ec95f71
 
 Please note that when you execute **main.py** it will search for additional modules and autoinstall it with pip based on modules references.
 
