@@ -12,9 +12,9 @@
 - **API Key Management**: Securely 256-bit AES store and effortlessly manage your Cisco Meraki API key in an encrypted local DB.
 - **Device Listing**: Instantly retrieve detailed lists of APs and switches.
 - **Meraki MX Status Monitoring**: Keep a pulse on the status of your Meraki MX appliances. (under development)
-- **Organization & Network Management**: Efficiently navigate through organizations and networks. (under development)
+- **Organization & Network Management**: Efficiently navigate through organizations and networks.
 - **Data Export**: Conveniently export device data into well-organized CSV files.
-- **Network Diagnostics Toolkit**: Includes additional third-party open-source tools troubleshoot network issues. (under development)
+- **The Swiss Army Knife Toolkit**: Includes additional third-party open-source tools to support in your daily routine.
 
 <br><br>
 # 🚀 Installation guide for Linux and MacOS
