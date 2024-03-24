@@ -40,7 +40,7 @@ from setuptools import setup, find_packages
 # ==================================================
 setup(
     name='Cisco Meraki CLU',
-    version='1.3',
+    version='1.4',
     packages=find_packages(),
     install_requires=[
         'tabulate',
