@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -102,14 +102,16 @@ def main_menu(fernet):
         term_extra.print_ascii_art()
 
         api_key = meraki_api_manager.get_api_key(fernet)
+        ipinfo_token = db_creator.get_tools_ipinfo_access_token(fernet)
         options = [
             "Network wide [under dev]",
             "Security & SD-WAN", 
             "Switch and wireless",
             "Environmental [under dev]", 
             "Organization [under dev]", 
-            "The Swiss Army Knife [under dev]", 
+            "The Swiss Army Knife", 
             f"{'Edit Cisco Meraki API Key' if api_key else 'Set Cisco Meraki API Key'}",
+            f"{'Edit IPinfo Token' if ipinfo_token else 'Set IPinfo Token'}",
             "Exit the Command Line Utility"
         ]
         current_year = datetime.now().year
@@ -125,10 +127,12 @@ def main_menu(fernet):
         print("└" + "─" * 58 + "┘")
 
         term_extra.print_footer(footer)
-        choice = input(colored("Choose a menu option [1-8]: ", "cyan"))
+        choice = input(colored("Choose a menu option [1-9]: ", "cyan"))
         
-        if choice.isdigit() and 1 <= int(choice) <= 8:
-            if choice == '2':
+        if choice.isdigit() and 1 <= int(choice) <= 9:
+            if choice == '1':
+                pass
+            elif choice == '2':
                 if api_key:
                     submenu.submenu_mx(api_key)
                 else:
@@ -141,10 +145,17 @@ def main_menu(fernet):
                 else:
                     print("Please set the Cisco Meraki API key first.")
                 input(colored("\nPress Enter to return to the main menu...", "green"))
-
+            elif choice == '4':
+                pass
+            elif choice == '5':
+                pass
+            elif choice == '6':
+                submenu.swiss_army_knife_submenu(fernet)
             elif choice == '7':
                 manage_api_key(fernet)
             elif choice == '8':
+                manage_ipinfo_token(fernet)
+            elif choice == '9':
                 term_extra.clear_screen()
                 term_extra.print_ascii_art()
 
@@ -163,7 +174,22 @@ def manage_api_key(fernet):
     term_extra.clear_screen()
     api_key = input("\nEnter the Cisco Meraki API Key: ")
     meraki_api_manager.save_api_key(api_key, fernet)
+
+def manage_ipinfo_token(fernet):
+    term_extra.clear_screen()
+    current_token = db_creator.get_tools_ipinfo_access_token(fernet)
+    if current_token:
+        print(colored(f"Current IPinfo Token: {current_token}", "yellow"))
+        change = input("Do you want to change it? [yes/no]: ").lower()
+        if change != 'yes':
+            return
     
+    new_token = input("\nEnter the new IPinfo access token: ")
+    if new_token:
+        db_creator.store_tools_ipinfo_access_token(new_token, fernet)
+        print(colored("\nIPinfo access token saved successfully.", "green"))
+    else:
+        print(colored("No token entered. No changes made.", "red"))
 
 # ==================================================
 # ERROR handling and logging
@@ -172,20 +198,24 @@ if __name__ == "__main__":
     try:
         db_path = 'db/cisco_meraki_clu_db.db'
         if not db_creator.database_exists(db_path):
-            os.system('cls')
+            os.system('cls')  # Clears the terminal screen.
             term_extra.print_ascii_art()
             if db_creator.prompt_create_database():
-                fernet = getpass(colored("\nEnter a password for encrypting the database: ", "green"))
+                db_password = getpass(colored("\nEnter a password for encrypting the database: ", "green"))
+                fernet = db_creator.generate_fernet_key(db_password)
+                db_creator.update_database_schema(db_path, db_password)  # Update the database schema after creation.
             else:
                 print(colored("Database creation cancelled. Exiting program.", "yellow"))
                 exit()
         else:
-            os.system('cls')
+            os.system('cls')  # Clears the terminal screen.
             term_extra.print_ascii_art()
-            fernet = getpass(colored("\n\nWelcome to Cisco Meraki Command Line Utility!\nThis program contains sensitive information. Please insert your password to continue: ", "green"))
+            db_password = getpass(colored("\n\nWelcome to Cisco Meraki Command Line Utility!\nThis program contains sensitive information. Please insert your password to continue: ", "green"))
+            fernet = db_creator.generate_fernet_key(db_password)
+
+        # At this point, the database exists, so update the schema as needed.
+        db_creator.update_database_schema(db_path, db_password)  # Ensure the schema is updated for existing databases too.
         
-        # Generate Fernet key based on the fernet
-        fernet = db_creator.generate_fernet_key(fernet)
         main_menu(fernet)
 
     except Exception as e:

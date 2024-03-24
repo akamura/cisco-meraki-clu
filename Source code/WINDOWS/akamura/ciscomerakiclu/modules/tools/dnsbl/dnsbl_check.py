@@ -32,50 +32,64 @@
 # ==================================================
 # IMPORT various libraries and modules
 # ==================================================
-import os
-import shutil
+import dns.resolver
+import json
+
+from pathlib import Path
+from termcolor import colored
+from rich.console import Console
+from rich.table import Table
+from rich.progress import Progress
+from rich.box import SIMPLE
+from settings import term_extra
+
+def reverse_ip(ip_address):
+    """Reverse the IP address for DNSBL queries."""
+    return '.'.join(ip_address.split('.')[::-1])
+
+def check_dnsbl(ip_address, services, progress):
+    """Check if an IP address is listed in the specified DNSBL services."""
+    reversed_ip = reverse_ip(ip_address)
+    results = {}
+
+    for service_name, service_domain in progress.track(services.items(), description="☕ Time to take a coffee."):
+        query = f"{reversed_ip}.{service_domain}"
+        try:
+            dns.resolver.resolve(query, 'A')
+            results[service_name] = colored("Listed: YES", "red")
+        except dns.resolver.NoAnswer:
+            results[service_name] = colored("Listed: NO [NO ANSWER]", "green")
+        except dns.resolver.NXDOMAIN:
+            results[service_name] = colored("Listed: NO", "green")
+        except Exception as e:
+            results[service_name] = colored(f"Error: {e}", "yellow")
+    return results
+
+def main():
+    term_extra.clear_screen()
+    term_extra.print_ascii_art()
+    current_script_path = Path(__file__).parent
+    dnsbl_json_path = current_script_path / 'dnsbl_services.json'
+
+    with open(dnsbl_json_path, "r") as file:
+        services_to_check = json.load(file)
+
+    ip_to_check = input("Please enter an IP address to check: ")
+
+    console = Console()
+    table = Table(show_header=True, header_style="bold green", box=SIMPLE)
+    table.add_column("Service", style="dim", width=50)
+    table.add_column("Result")
+
+    with Progress() as progress:
+        results = check_dnsbl(ip_to_check, services_to_check, progress)
+
+    for service, result in results.items():
+        table.add_row(service, result)
+
+    console.print(table)
+    input("Press Enter to return to the submenu...")
 
 
-# ==================================================
-# CREATE the application layout
-# ==================================================
-def print_header(title):
-    columns, rows = get_terminal_size()
-    print("-" * columns)
-
-def print_menu(options):
-    columns, rows = get_terminal_size()
-    half = len(options) // 2
-    for i in range(half):
-        left_option = f"{i+1}. {options[i]}"
-        right_option = f"{i+1+half}. {options[i+half]}" if i + half < len(options) else ''
-        print(f"{left_option:<{columns//2}}{right_option}")
-
-def print_footer(footer_text):
-    columns, _ = get_terminal_size()
-    print("\n")
-    lines = footer_text.split('\n')
-    for line in lines:
-        print(line.ljust(columns))
-    print("\n")
-    
-
-# ==================================================
-# CLEAR the screen and present the main menu
-# ==================================================
-def clear_screen():
-    os.system('cls')
-
-def print_ascii_art():
-    ascii_art = """
-  ____ _                 __  __                _    _    ____ _    _   _ 
- / ___(_)___  ___ ___   |  \/  | ___ _ __ __ _| | _(_)  / ___| |  | | | |
-| |   | / __|/ __/ _ \  | |\/| |/ _ \ '__/ _` | |/ / | | |   | |  | | | |
-| |___| \__ \ (_| (_) | | |  | |  __/ | | (_| |   <| | | |___| |__| |_| |
- \____|_|___/\___\___/  |_|  |_|\___|_|  \__,_|_|\_\_|  \____|_____\___/ 
-"""
-    print(ascii_art)
-                    
-def get_terminal_size():
-    columns, rows = shutil.get_terminal_size()
-    return columns, rows
+if __name__ == "__main__":
+    main()

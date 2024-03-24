@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -39,9 +39,7 @@ from termcolor import colored
 from cryptography.fernet import Fernet
 from base64 import urlsafe_b64encode
 
-# Utility function to generate a Fernet key from a password
 def generate_fernet_key(password):
-    # This is a simple way to ensure the key size fits Fernet's requirements
     return Fernet(urlsafe_b64encode(password.encode('utf-8').ljust(32)[:32]))
 
 # ==================================================
@@ -66,10 +64,23 @@ def create_cisco_meraki_clu_db(db_path):
     return True
 
 def database_exists(db_path):
+    db_path = 'db/cisco_meraki_clu_db.db'
     return os.path.exists(db_path)
 
+def verify_database_password():
+    db_path = 'db/cisco_meraki_clu_db.db'
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.execute("SELECT count(*) FROM sensitive_data")
+        conn.close()
+        return True
+    except Exception as e:
+        print(colored("\nError: The provided database password is incorrect.\n", "red"))
+        return False
+
+
 # ==================================================
-# PROMPT to Create Database
+# CREATE a new Database table for IPinfo token
 # ==================================================
 def prompt_create_database():
     db_path = 'db/cisco_meraki_clu_db.db'
@@ -85,5 +96,49 @@ def prompt_create_database():
         return False
     else:
         print(colored("\nInvalid input. Please try again.\n", "red"))
-        return prompt_create_database()  # Recursively call until valid input is received
+        return prompt_create_database()
 
+def update_database_schema(db_path, password):
+    db_path = 'db/cisco_meraki_clu_db.db'
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.execute(f"PRAGMA key = '{password}'")
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS tools_ipinfo (
+                id INTEGER PRIMARY KEY, 
+                access_token TEXT
+            );
+        """)
+        conn.commit()
+        conn.close()
+        print(colored("Database schema updated successfully.", "green"))
+    except Exception as e:
+        print(colored(f"Failed to update database schema: {e}", "red"))
+
+def store_tools_ipinfo_access_token(access_token, password):
+    db_path = 'db/cisco_meraki_clu_db.db'
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.execute(f"PRAGMA key = '{password}'")
+        conn.execute("INSERT INTO tools_ipinfo (access_token) VALUES (?)", (access_token,))
+        conn.commit()
+        conn.close()
+        print(colored("Access token stored successfully.", "green"))
+    except Exception as e:
+        print(colored(f"Failed to store access token: {e}", "red"))
+
+def get_tools_ipinfo_access_token(password):
+    db_path = 'db/cisco_meraki_clu_db.db'
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.execute(f"PRAGMA key = '{password}'")
+        cursor = conn.cursor()
+        cursor.execute("SELECT access_token FROM tools_ipinfo LIMIT 1")
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return row[0]
+        return None
+    except Exception as e:
+        print(f"Failed to retrieve access token: {e}")
+        return None

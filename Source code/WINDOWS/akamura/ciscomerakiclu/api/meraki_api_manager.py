@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -38,15 +38,12 @@ from cryptography.fernet import Fernet
 from base64 import urlsafe_b64encode
 from termcolor import colored
 
-# Utility function to generate a Fernet key from a password
 def generate_fernet_key(password):
-    # This is a simple way to ensure the key size fits Fernet's requirements
     return Fernet(urlsafe_b64encode(password.encode('utf-8').ljust(32)[:32]))
 
 db_path = os.path.join(os.path.dirname(__file__), '..', 'db', 'cisco_meraki_clu_db.db')
 
 def save_api_key(api_key, fernet):
-    # Note: fernet is now directly used, assuming it's correctly passed as a Fernet object
     encrypted_api_key = fernet.encrypt(api_key.encode('utf-8'))
 
     try:
@@ -60,8 +57,6 @@ def save_api_key(api_key, fernet):
         conn.close()
 
 def get_api_key(fernet):
-    # Note: fernet is now directly used, assuming it's correctly passed as a Fernet object
-
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.execute("SELECT data FROM sensitive_data WHERE id = 1")
