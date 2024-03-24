@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -44,6 +44,12 @@ from termcolor import colored
 from modules.meraki import meraki_api 
 from modules.meraki import meraki_ms_mr
 from modules.meraki import meraki_mx
+
+from modules.tools.dnsbl import dnsbl_check
+from modules.tools.utilities import tools_ipcheck
+from modules.tools.utilities import tools_passgen
+from modules.tools.utilities import tools_subnetcalc
+
 from settings import term_extra
 
 
@@ -58,10 +64,19 @@ def submenu_sw_and_ap(api_key):
     while True:
         term_extra.clear_screen()
         term_extra.print_ascii_art()
-        header = ""
+
         options = ["Select an Organization", "Return to Main Menu"]
-        term_extra.print_header(header)
-        term_extra.print_menu(options)
+
+
+        # Description header over the menu
+        print("\n")
+        print("┌" + "─" * 58 + "┐")
+        print("│".ljust(59) + "│")
+        for index, option in enumerate(options, start=1):
+            print(f"│ {index}. {option}".ljust(59) + "│")
+        print("│".ljust(59) + "│")
+        print("└" + "─" * 58 + "┘")
+        
         choice = input(colored("\nChoose a menu option [1-2]: ", "cyan"))
 
         if choice == '1':
@@ -69,7 +84,6 @@ def submenu_sw_and_ap(api_key):
             if selected_org:
                 term_extra.clear_screen()
                 term_extra.print_ascii_art()
-                term_extra.print_header(header)
                 print(colored(f"\nYou selected {selected_org['name']}.\n", "green"))
                 select_network(api_key, selected_org['id'])
         elif choice == '2':
@@ -79,10 +93,18 @@ def submenu_mx(api_key):
     while True:
         term_extra.clear_screen()
         term_extra.print_ascii_art()
-        header = ""
+
         options = ["Select an Organization", "Return to Main Menu"]
-        term_extra.print_header(header)
-        term_extra.print_menu(options)
+
+        # Description header over the menu
+        print("\n")
+        print("┌" + "─" * 58 + "┐")
+        print("│".ljust(59) + "│")
+        for index, option in enumerate(options, start=1):
+            print(f"│ {index}. {option}".ljust(59) + "│")
+        print("│".ljust(59) + "│")
+        print("└" + "─" * 58 + "┘")
+
         choice = input(colored("\nChoose a menu option [1-2]: ", "cyan"))
 
         if choice == '1':
@@ -90,7 +112,6 @@ def submenu_mx(api_key):
             if selected_org:
                 term_extra.clear_screen()
                 term_extra.print_ascii_art()
-                term_extra.print_header(header)
                 print(colored(f"\nYou selected {selected_org['name']}.\n", "green"))
                 meraki_mx.select_mx_network(api_key, selected_org['id'])
         elif choice == '2':
@@ -114,7 +135,7 @@ def select_network(api_key, organization_id):
         while True:
             term_extra.clear_screen()
             term_extra.print_ascii_art()
-            header = "Network Menu"
+
             options = [
                 "Get Switches",
                 "Get Access Points",
@@ -125,11 +146,15 @@ def select_network(api_key, organization_id):
                 "Download Devices Statuses CSV (under dev)",
                 "Return to Main Menu"
             ]
-            term_extra.print_header(header)
-            term_extra.print_menu(options)
-
-            columns, _ = term_extra.get_terminal_size()
-            print("-" * columns)
+            
+            # Description header over the menu
+            print("\n")
+            print("┌" + "─" * 58 + "┐")
+            print("│".ljust(59) + "│")
+            for index, option in enumerate(options, start=1):
+                print(f"│ {index}. {option}".ljust(59) + "│")
+            print("│".ljust(59) + "│")
+            print("└" + "─" * 58 + "┘")
 
             choice = input(colored("\nChoose a menu option [1-8]: ", "cyan"))
 
@@ -166,3 +191,56 @@ def select_network(api_key, organization_id):
                 break
     else:
         print("[red]No network selected or invalid organization ID.[/red]")
+
+
+# ==================================================
+# DEFINE the Swiss Army Knife submenu
+# ==================================================
+def swiss_army_knife_submenu(db_password):
+    while True:
+        term_extra.clear_screen()
+        term_extra.print_ascii_art()
+
+        options = [
+            "DNSBL Check",
+            "IP Check",
+            "MTU Correct Size Calculator [under dev]",
+            "Password Generator",
+            "Subnet Calculator",
+            "WiFi Spectrum Analyzer [under dev]",
+            "WiFi Adapter Info [under dev]",
+            "WiFi Neighbors [under dev]",
+            "Return to Main Menu"
+        ]
+
+        # Description header over the menu
+        print("\n")
+        print("┌" + "─" * 58 + "┐")
+        print("│".ljust(59) + "│")
+        for index, option in enumerate(options, start=1):
+            print(f"│ {index}. {option}".ljust(59) + "│")
+        print("│".ljust(59) + "│")
+        print("└" + "─" * 58 + "┘")
+
+        choice = input(colored("Choose a menu option [1-9]: ", "cyan"))
+
+        if choice == '1':
+            dnsbl_check.main()
+        elif choice == '2':
+            tools_ipcheck.main(db_password)
+        elif choice == '3':
+            pass
+        elif choice == '4':
+            tools_passgen.main()
+        elif choice == '5':
+            tools_subnetcalc.main()
+        elif choice == '6':
+            pass
+        elif choice == '7':
+            pass
+        elif choice == '8':
+            pass
+        elif choice == '9':
+            break
+        else:
+            print(colored("Invalid input. Please enter a number between 1 and 9.", "red"))

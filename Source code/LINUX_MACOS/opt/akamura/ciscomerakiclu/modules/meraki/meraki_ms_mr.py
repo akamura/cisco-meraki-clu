@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -64,7 +64,7 @@ def display_switch_ports(api_key, serial_number):
         print(f"[red]Failed to fetch real-time port statuses/packets: {e}[/red]")
 
     if switch_ports:
-        table = Table(show_header=True, header_style="green", box=SIMPLE)
+        table = Table(show_header=True, header_style="bold green", box=SIMPLE)
 
         columns = [
             ("Port", 5), ("Name", 30), ("Enabled", 5),
@@ -123,7 +123,7 @@ def display_devices(api_key, network_id, device_type):
 
     if devices:
         devices = sorted(devices, key=lambda x: x.get('name', '').lower())
-        table = Table(show_header=True, header_style="green", box=SIMPLE)
+        table = Table(show_header=True, header_style="bold green", box=SIMPLE)
 
         priority_columns = ['name', 'mac', 'lanIp', 'serial', 'model']
         excluded_columns = ['networkId', 'details', 'lat', 'lng', 'firmware']
@@ -161,7 +161,7 @@ def display_organization_devices_statuses(api_key, organization_id, network_id):
     if devices_statuses:
         devices_statuses = [device for device in devices_statuses if device.get('productType') in ["switch", "wireless"]]
         devices_statuses = sorted(devices_statuses, key=lambda x: x.get('name', '').lower())
-        table = Table(show_header=True, header_style="green", box=SIMPLE)
+        table = Table(show_header=True, header_style="bold green", box=SIMPLE)
 
         priority_columns = ['name', 'serial', 'mac', 'ipType', 'lanIp', 'gateway', 'primaryDns', 'secondaryDns', 'PSU 1', 'PSU 2', 'status', 'lastReportedAt']
         

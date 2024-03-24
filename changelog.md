@@ -1,3 +1,22 @@
+## Version 1.4 (2024-03-24)
+
+### New Features
+- **[DNSBL Check Tool]** Check your IP reputation agains more than 300 lists.
+- **[IP Check Tool]** Based on the powerful IPinfo database this tool gives you precise data about an IP when you need it most.
+- **[Password Generator Tool]** Generate infinite complex passwords and export them in CSV format.
+- **[Subnet Calculator Tool]** An assistant to help you create, manipulate and export subnets.
+
+### Minor improvements
+- Refactored and redesigned submenus across the application.
+
+### Bug Fixes
+- No fixes from the previous release.
+
+### Documentation Updates
+- Updated documentation.
+
+
+
 ## Version 1.3 (2024-02-18)
 
 ### New Features

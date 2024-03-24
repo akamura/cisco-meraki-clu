@@ -32,43 +32,64 @@
 # ==================================================
 # IMPORT various libraries and modules
 # ==================================================
-import os
-from pysqlcipher3 import dbapi2 as sqlite
+import dns.resolver
+import json
+
+from pathlib import Path
 from termcolor import colored
+from rich.console import Console
+from rich.table import Table
+from rich.progress import Progress
+from rich.box import SIMPLE
+from settings import term_extra
+
+def reverse_ip(ip_address):
+    """Reverse the IP address for DNSBL queries."""
+    return '.'.join(ip_address.split('.')[::-1])
+
+def check_dnsbl(ip_address, services, progress):
+    """Check if an IP address is listed in the specified DNSBL services."""
+    reversed_ip = reverse_ip(ip_address)
+    results = {}
+
+    for service_name, service_domain in progress.track(services.items(), description="☕ Time to take a coffee."):
+        query = f"{reversed_ip}.{service_domain}"
+        try:
+            dns.resolver.resolve(query, 'A')
+            results[service_name] = colored("Listed: YES", "red")
+        except dns.resolver.NoAnswer:
+            results[service_name] = colored("Listed: NO [NO ANSWER]", "green")
+        except dns.resolver.NXDOMAIN:
+            results[service_name] = colored("Listed: NO", "green")
+        except Exception as e:
+            results[service_name] = colored(f"Error: {e}", "yellow")
+    return results
+
+def main():
+    term_extra.clear_screen()
+    term_extra.print_ascii_art()
+    current_script_path = Path(__file__).parent
+    dnsbl_json_path = current_script_path / 'dnsbl_services.json'
+
+    with open(dnsbl_json_path, "r") as file:
+        services_to_check = json.load(file)
+
+    ip_to_check = input("Please enter an IP address to check: ")
+
+    console = Console()
+    table = Table(show_header=True, header_style="bold green", box=SIMPLE)
+    table.add_column("Service", style="dim", width=50)
+    table.add_column("Result")
+
+    with Progress() as progress:
+        results = check_dnsbl(ip_to_check, services_to_check, progress)
+
+    for service, result in results.items():
+        table.add_row(service, result)
+
+    console.print(table)
+    input("Press Enter to return to the submenu...")
 
 
-# ==================================================
-# SAVE the Cisco Meraki API Key in the Encrypted DB
-# ==================================================
-def save_api_key(db_password, api_key):
-    try:
-        db_path = os.path.join('/opt/akamura/ciscomerakiclu/db', 'cisco_meraki_clu_db.db')
-        conn = sqlite.connect(db_path)
-        conn.execute(f"PRAGMA key = '{db_password}'")
-        conn.execute("INSERT OR REPLACE INTO sensitive_data (id, data) VALUES (1, ?)", (api_key,))
-        conn.commit()
-        print("API key saved successfully.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    finally:
-        conn.close()
-
-def get_api_key(db_password):
-    conn = None  # Initialize connection to None
-    try:
-        db_path = os.path.join('/opt/akamura/ciscomerakiclu/db', 'cisco_meraki_clu_db.db')
-        conn = sqlite.connect(db_path)
-        conn.execute(f"PRAGMA key = '{db_password}'")
-
-        cursor = conn.execute("SELECT data FROM sensitive_data WHERE id = 1")
-        api_key = cursor.fetchone()
-
-        return api_key[0] if api_key else None
-
-    except Exception as e:
-        print(colored("An error occurred while accessing the database: ", "red") + str(e))
-        return None
-
-    finally:
-        if conn:
-            conn.close()
+if __name__ == "__main__":
+    main()

@@ -42,6 +42,17 @@ To achieve the optimal experience, I highly encourage you to download and instal
         - pysqlcipher3
         - rich
         - setuptools
+        - dnspython
+        - ipinfo
+        - scapy
+        - secrets
+        - numpy
+        - ipaddress
+
+## IPinfo.io Token
+The Swiss Army Knife tools include the powerful **IP Check** utility that run with IPinfo API, to use the utility you need to generate and save the API token.
+You can SignUP for free at [IPinfo.io](https://ipinfo.io/) and from your Dashboard get the **Token**.
+When you run the Cisco Meraki CLU choose the menu option **Set IPinfo Token** and paste your API token.
 
 ## Clone the repository
 ```shell

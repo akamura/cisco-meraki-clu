@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -67,7 +67,7 @@ def display_firewall_rules(api_key, network_id, organization_id):
     term_extra.print_ascii_art()
     
     if rules:
-        table = Table(show_header=True, header_style="green", box=SIMPLE)
+        table = Table(show_header=True, header_style="bold green", box=SIMPLE)
         priority_columns = ['policy', 'protocol', 'srcPort', 'srcCidr', 'destPort', 'destCidr']
         excluded_columns = ['syslogEnabled']
         other_columns = [key for key in rules[0].keys() if key not in priority_columns and key not in excluded_columns]
@@ -96,8 +96,6 @@ def display_firewall_rules(api_key, network_id, organization_id):
     input(colored("\nPress Enter to return to the previous menu...", "green"))
 
 
-
-
 # ==================================================
 # PROCESS Data Inside Networks (MX Firewall Rules)
 # ==================================================
@@ -106,8 +104,6 @@ def select_mx_network(api_key, organization_id):
     if selected_network:
         network_name = selected_network['name']
         network_id = selected_network['id']
-
-        display_firewall_rules(api_key, network_id, organization_id)
         
         downloads_path = str(Path.home() / "Downloads")
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -117,23 +113,27 @@ def select_mx_network(api_key, organization_id):
         while True:
             term_extra.clear_screen()
             term_extra.print_ascii_art()
-            header = "MX Firewall Rules Menu"
+            
             options = [
                 "List Firewall Rules",
                 "Download Firewall Rules CSV",
                 "Status (under dev)",
                 "Return to Main Menu"
             ]
-            term_extra.print_header(header)
-            term_extra.print_menu(options)
-            
-            columns, _ = term_extra.get_terminal_size()
-            print("-" * columns)
+
+            # Description header over the menu
+            print("\n")
+            print("┌" + "─" * 58 + "┐")
+            print("│".ljust(59) + "│")
+            for index, option in enumerate(options, start=1):
+                print(f"│ {index}. {option}".ljust(59) + "│")
+            print("│".ljust(59) + "│")
+            print("└" + "─" * 58 + "┘")
 
             choice = input(colored("\nChoose a menu option [1-4]: ", "cyan"))
             
             if choice == '1':
-                display_firewall_rules(api_key, network_id)
+                display_firewall_rules(api_key, network_id, organization_id)
             
             elif choice == '2':
                 firewall_rules = meraki_api.get_l3_firewall_rules(api_key, network_id)
@@ -143,6 +143,7 @@ def select_mx_network(api_key, organization_id):
                 else:
                     print("No firewall rules to download.")
                 choice = input(colored("\nPress Enter to return to the precedent menu...", "green"))
-
+            elif choice == '3':
+                pass
             elif choice == '4':
                 break

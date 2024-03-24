@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                     *
+#   Version:     1.4                                                     *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -50,7 +50,14 @@ setup(
         'requests',
         'pysqlcipher3',
         'rich',
-        'setuptools'
+        'dnspython',
+        'setuptools',
+        'dnspython',
+        'ipinfo',
+        'scapy',
+        'secrets',
+        'numpy',
+        'ipaddress'
     ],
     include_package_data=True,
     entry_points={

@@ -1,6 +1,6 @@
 #**************************************************************************
 #   App:         Cisco Meraki CLU                                         *
-#   Version:     1.3                                                      *
+#   Version:     1.4                                                      *
 #   Author:      Matia Zanella                                            *
 #   Description: Cisco Meraki CLU (Command Line Utility) is an essential  *
 #                tool crafted for Network Administrators managing Meraki  *
@@ -103,14 +103,16 @@ def main_menu(db_password):
         term_extra.print_ascii_art()
 
         api_key = meraki_api_manager.get_api_key(db_password)
+        ipinfo_token = db_creator.get_tools_ipinfo_access_token(db_password)
         options = [
             "Network wide [under dev]",
             "Security & SD-WAN", 
             "Switch and wireless",
             "Environmental [under dev]", 
             "Organization [under dev]", 
-            "The Swiss Army Knife [under dev]", 
+            "The Swiss Army Knife", 
             f"{'Edit Cisco Meraki API Key' if api_key else 'Set Cisco Meraki API Key'}",
+            f"{'Edit IPinfo Token' if ipinfo_token else 'Set IPinfo Token'}",
             "Exit the Command Line Utility"
         ]
         current_year = datetime.now().year
@@ -126,10 +128,12 @@ def main_menu(db_password):
         print("└" + "─" * 58 + "┘")
 
         term_extra.print_footer(footer)
-        choice = input(colored("Choose a menu option [1-8]: ", "cyan"))
+        choice = input(colored("Choose a menu option [1-9]: ", "cyan"))
         
-        if choice.isdigit() and 1 <= int(choice) <= 8:
-            if choice == '2':
+        if choice.isdigit() and 1 <= int(choice) <= 9:
+            if choice == '1':
+                pass
+            elif choice == '2':
                 if api_key:
                     submenu.submenu_mx(api_key)
                 else:
@@ -142,10 +146,17 @@ def main_menu(db_password):
                 else:
                     print("Please set the Cisco Meraki API key first.")
                 input(colored("\nPress Enter to return to the main menu...", "green"))
-
+            elif choice == '4':
+                pass
+            elif choice == '5':
+                pass
+            elif choice == '6':
+                submenu.swiss_army_knife_submenu(db_password)
             elif choice == '7':
                 manage_api_key(db_password)
             elif choice == '8':
+                manage_ipinfo_token(db_password)
+            elif choice == '9':
                 term_extra.clear_screen()
                 term_extra.print_ascii_art()
 
@@ -160,12 +171,27 @@ def main_menu(db_password):
         else:
             print(colored("Invalid choice. Please try again.", "red"))
 
-
 def manage_api_key(db_password):
     term_extra.clear_screen()
     api_key = input("\nEnter the Cisco Meraki API Key: ")
     meraki_api_manager.save_api_key(db_password, api_key)
+
+def manage_ipinfo_token(db_password):
+    term_extra.clear_screen()
+    current_token = db_creator.get_tools_ipinfo_access_token(db_password)
+    if current_token:
+        print(colored(f"Current IPinfo Token: {current_token}", "yellow"))
+        change = input("Do you want to change it? [yes/no]: ").lower()
+        if change != 'yes':
+            return
     
+    new_token = input("\nEnter the new IPinfo access token: ")
+    if new_token:
+        db_creator.store_tools_ipinfo_access_token(db_password, new_token)
+        print(colored("\nIPinfo access token saved successfully.", "green"))
+    else:
+        print(colored("No token entered. No changes made.", "red"))
+
 
 # ==================================================
 # ERROR handling and logging
@@ -177,11 +203,17 @@ if __name__ == "__main__":
             os.system('clear')
             term_extra.print_ascii_art()
             db_password = db_creator.prompt_create_database()
+            if db_password:
+                db_creator.update_database_schema(db_password)
         else:
             os.system('clear')
             term_extra.print_ascii_art()
             db_password = getpass(colored("\n\nWelcome to Cisco Meraki Command Line Utility!\nThis program contains sensitive information. Please insert your password to continue: ", "green"))
-            db_creator.verify_database_password(db_password)
+            if db_creator.verify_database_password(db_password):
+                db_creator.update_database_schema(db_password)
+            else:
+                raise ValueError("Incorrect database password.")
+
         main_menu(db_password)
     except Exception as e:
         logger.error("An error occurred", exc_info=True)

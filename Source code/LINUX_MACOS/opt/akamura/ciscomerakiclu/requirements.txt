@@ -7,3 +7,9 @@ requests
 pysqlcipher3
 rich
 setuptools
+dnspython
+ipinfo
+scapy
+secrets
+numpy
+ipaddress
