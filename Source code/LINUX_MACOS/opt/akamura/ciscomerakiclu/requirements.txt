@@ -10,6 +10,5 @@ setuptools
 dnspython
 ipinfo
 scapy
-secrets
 numpy
 ipaddress
