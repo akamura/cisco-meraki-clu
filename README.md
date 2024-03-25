@@ -14,7 +14,7 @@
 - **Meraki MX Status Monitoring**: Keep a pulse on the status of your Meraki MX appliances. (under development)
 - **Organization & Network Management**: Efficiently navigate through organizations and networks.
 - **Data Export**: Conveniently export device data into well-organized CSV files.
-- **The Swiss Army Knife Toolkit**: Includes additional third-party open-source tools to support in your daily routine.
+- **The Swiss Army Knife Toolkit**: Includes additional tools to support in your daily routine.
 
 <br><br>
 # 🚀 Installation guide for Linux and MacOS
